@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sudoku WASM</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app-bg"></div>
+
+<header class="navbar" aria-label="Navegacion principal">
+  <div class="navbar-inner">
+    <p class="brand">Sudoku Solver</p>
+    <nav class="tabs">
+      <a href="#" class="tab is-active" aria-current="page">Solver</a>
+      <a href="#" class="tab">Insights</a>
+      <a href="#" class="tab">History</a>
+    </nav>
+  </div>
+</header>
+
+<main class="app-shell">
+  <section class="hero" aria-label="Sudoku Workspace">
+    <section class="hero-panel hero-panel-left">
+      <p class="eyebrow">Powered by WebAssembly</p>
+      <h1 class="headline">Precision Focus.</h1>
+      <p class="lead">Una experiencia de resolucion limpia y de alto rendimiento para demostrar integracion Web + WASM.</p>
+
+      <article class="insight-box">
+        <p class="insight-title">Algorithm Insight</p>
+        <p class="insight-body">Backtracking en C ejecutado en WebAssembly con validacion visual y feedback en tiempo real.</p>
+      </article>
+
+      <div class="stats-list">
+        <div class="stat-row">
+          <span>Dificultad</span>
+          <strong id="difficultyLevel">Intermedia</strong>
+        </div>
+        <div class="stat-row">
+          <span>Celdas llenas</span>
+          <strong><span id="filledCount">0</span> / 81</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero-panel hero-panel-board">
+      <div class="board-card">
+        <div id="board" class="sudoku-grid" aria-label="Tablero de Sudoku"></div>
+      </div>
+      <p id="status" class="status status--info" role="status" aria-live="polite">Inicializando WASM...</p>
+    </section>
+
+    <aside class="hero-panel hero-panel-right" aria-label="Acciones y controles">
+      <button id="solveBtn" class="btn btn-primary">Resolver</button>
+      <button id="exampleBtn" class="btn btn-accent">Cargar ejemplo</button>
+      <button id="clearBtn" class="btn btn-ghost">Limpiar</button>
+
+      <div class="control-card">
+        <p class="control-title">Auto-check</p>
+        <p class="control-value">ON</p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script src="sudoku.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
