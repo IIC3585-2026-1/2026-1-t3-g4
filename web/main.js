@@ -200,32 +200,63 @@ function validateBoardVisual() {
 }
 
 function solve() {
-  if (!ModuleReady) {
-    setStatus("WASM aun no esta listo.", "info");
-    return;
-  }
+  const solveBtn = document.getElementById("solveBtn");
+  if (solveBtn) solveBtn.disabled = true;
 
-  if (!validateBoardVisual()) {
-    setStatus("Corrige los conflictos marcados antes de resolver.", "error");
-    return;
-  }
+  let ptr = 0;
 
-  const board = getBoard();
-  const ptr = Module._malloc(board.length * 4);
-  Module.HEAP32.set(board, ptr / 4);
+  try {
+    setStatus("Resolviendo...", "info");
 
-  const solved = Module._solve_sudoku(ptr);
+    if (!ModuleReady) {
+      setStatus("WASM aun no esta listo.", "error");
+      return;
+    }
 
-  if (solved) {
-    const result = Array.from(Module.HEAP32.subarray(ptr / 4, ptr / 4 + 81));
+    if (!validateBoardVisual()) {
+      setStatus("Corrige los conflictos marcados antes de resolver.", "error");
+      return;
+    }
+
+    const board = getBoard();
+    const i32Size = Int32Array.BYTES_PER_ELEMENT;
+
+    ptr = Module._malloc(board.length * i32Size);
+    if (!ptr) {
+      throw new Error("No se pudo reservar memoria en WASM.");
+    }
+
+    Module.HEAP32.set(board, ptr / i32Size);
+
+    const solved = Module._solve_sudoku(ptr);
+    if (!solved) {
+      setStatus("Sin solucion para este tablero.", "error");
+      return;
+    }
+
+    const result = Array.from(
+      Module.HEAP32.subarray(ptr / i32Size, ptr / i32Size + 81)
+    );
+
     setBoard(result);
-    validateBoardVisual();
-    setStatus("Sudoku resuelto correctamente.", "ok");
-  } else {
-    setStatus("Sin solucion para este tablero.", "error");
-  }
 
-  Module._free(ptr);
+    const noConflicts = validateBoardVisual();
+    const isComplete = getBoard().every(value => value >= 1 && value <= 9);
+
+    if (noConflicts && isComplete) {
+      setStatus("Resuelto correctamente.", "ok");
+    } else {
+      setStatus("La respuesta de WASM es invalida o incompleta.", "error");
+    }
+  } catch (error) {
+    console.error("Error al resolver Sudoku:", error);
+    setStatus("Error al resolver el Sudoku.", "error");
+  } finally {
+    if (ptr) {
+      Module._free(ptr);
+    }
+    if (solveBtn) solveBtn.disabled = false;
+  }
 }
 
 function clearBoard() {
