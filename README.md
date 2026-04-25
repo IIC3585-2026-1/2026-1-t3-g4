@@ -66,6 +66,8 @@ Salida esperada:
 make run
 ```
 
+Se usa un servidor estatico local porque el modulo `sudoku.wasm` debe cargarse como recurso web. Si se abre el HTML directamente con `file://`, algunos navegadores bloquean o manejan mal la carga del archivo `.wasm`. Al servirlo desde `http://localhost`, la interfaz puede cargar correctamente `sudoku.js` y `sudoku.wasm`.
+
 Abrir en navegador:
 
 - `http://localhost:8000/web/index.html`
